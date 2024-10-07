@@ -147,11 +147,11 @@ a027748 = 1 :< Infinite.concatMap distinctPrimeFactors (2 ...)
 --
 -- See also 'a000290' and 'squares'.
 a034705 :: Infinite Int
-a034705 = go 0 (Infinite.tail (Infinite.inits1 a000290)) (IS.fromList [0])
+a034705 = Infinite.unfoldr go (0, Infinite.tail (Infinite.inits1 a000290), IS.fromList [0])
   where
-    go x (vs :< vss) seen
-      | minSeen < x = minSeen :< go x (vs :< vss) seen'
-      | otherwise = go w vss (IS.union seen (IS.fromList (scanl (+) w ws)))
+    go (x, vs :< vss, seen)
+      | minSeen < x = (minSeen, (x, vs :< vss, seen'))
+      | otherwise = go (w, vss, IS.union seen (IS.fromList (scanl (+) w ws)))
       where
         (w :| ws) = NE.reverse vs
         (minSeen, seen') = IS.deleteFindMin seen
