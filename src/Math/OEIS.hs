@@ -67,7 +67,7 @@ a000078 = Infinite.unfoldr go (0, 0, 0, 1)
 a000111 :: (Integral a) => Infinite a
 a000111 = Infinite.interleave a000364 a000182
 
--- | Tangent (of "Zag") numbers: e.g.f. \(\tan(x)\), also (up to signs) e.g.f.
+-- | Tangent (or \"Zag\") numbers: e.g.f. \(\tan(x)\), also (up to signs) e.g.f.
 -- \(\tanh(x)\), i.e. [A000182](https://oeis.org/A000182).
 a000182 :: (Integral a) => Infinite a
 a000182 =
@@ -91,7 +91,7 @@ a000290 = Infinite.scanl (+) 0 ((1, 3) ....)
 squares = a000290
 -- ^ See 'a000290'.
 
--- | Euler (or secant or "Zig") numbers: e.g.f. (even powers only)
+-- | Euler (or secant or \"Zig\") numbers: e.g.f. (even powers only)
 -- \(\sec(x) = \frac{1}{\cos(x)}\), i.e. [A000364](https://oeis.org/A000364).
 a000364 :: (Integral a) => Infinite a
 a000364 = everyOther (Infinite.map abs euler)
