@@ -62,11 +62,13 @@ a000078 = Infinite.unfoldr go (0, 0, 0, 1)
   where
     go (a, b, c, d) = (a, (b, c, d, a + b + c + d))
 
--- https://oeis.org/A000111
+-- | Euler up/down numbers: e.g.f. \(\sec(x) + \tan(x)\), i.e.
+-- [A000111](https://oeis.org/A000111).
 a000111 :: (Integral a) => Infinite a
 a000111 = Infinite.interleave a000364 a000182
 
--- https://oeis.org/A000182
+-- | Tangent (of "Zag") numbers: e.g.f. \(\tan(x)\), also (up to signs) e.g.f.
+-- \(\tanh(x)\), i.e. [A000182](https://oeis.org/A000182).
 a000182 :: (Integral a) => Infinite a
 a000182 =
   Infinite.map
@@ -79,23 +81,28 @@ a000182 =
 a000217 :: (Integral a) => a -> a
 a000217 n = n * (n + 1) `div` 2
 
+-- | See 'a000217'.
 triangularNumbers :: (Integral a) => Infinite a
 triangularNumbers = Infinite.map a000217 (0 ...)
 
--- https://oeis.org/A000290
 a000290, squares :: (Enum a, Num a) => Infinite a
 a000290 = Infinite.scanl (+) 0 ((1, 3) ....)
+-- ^ The squares: \(a000290(n) = n^2\), i.e. [A000290](https://oeis.org/A000290).
 squares = a000290
+-- ^ See 'a000290'.
 
--- https://oeis.org/A000364
+-- | Euler (or secant or "Zig") numbers: e.g.f. (even powers only)
+-- \(\sec(x) = \frac{1}{\cos(x)}\), i.e. [A000364](https://oeis.org/A000364).
 a000364 :: (Integral a) => Infinite a
 a000364 = everyOther (Infinite.map abs euler)
 
--- https://oeis.org/A002378
+-- | Oblong (or promic, pronic, or heteromecic) numbers:
+-- \(a002378(n) = n(n+1)\), i.e. [A002378](https://oeis.org/A002378).
 a002378 :: (Integral a) => a -> a
 a002378 n = n * (n + 1)
 
--- https://oeis.org/A003313
+-- | Length of shortest addition chain for \(n\), i.e.
+-- [A003313](https://oeis.org/A003313).
 a003313 :: Natural -> Int
 a003313 n
   | n `elem` [77, 154] = k - 1
@@ -103,30 +110,42 @@ a003313 n
   where
     k = length (powerTree n) - 1
 
--- https://oeis.org/A007947
+-- | Largest squarefree number diving \(n\): the square free kernel of \(n\),
+-- \(\text{rad}(n)\), radical of \(n\), i.e. [A007947](https://oeis.org/A007947).
 a007947 :: (UniqueFactorisation a) => a -> a
 a007947 = product . distinctPrimeFactors
 
--- | The distinct prime factors of a given number.
+-- | The [distinct prime factors](https://mathworld.wolfram.com/DistinctPrimeFactors.html)
+-- of a given number.
 --
 -- >>> distinctPrimeFactors 504
 -- 2 :| [3,7]
+--
+-- See also 'a007947' and 'a027748'.
 distinctPrimeFactors :: (UniqueFactorisation a) => a -> NonEmpty a
 distinctPrimeFactors = NE.map (unPrime . fst) . NE.fromList . factorise
 
--- https://oeis.org/A007953
 a007953, digitSum :: (Integral a) => a -> a
 a007953 n
   | n < 10 = n
   | n < 100 = a076314 n
   | otherwise = first a007953 >>> uncurry (+) $ divMod n 10
+-- ^ Digital sum of \(n\), i.e. [A007953](https://oeis.org/A007953).
 digitSum = a007953
+-- ^ See 'a007953'.
 
--- https://oeis.org/A027748
+-- | Irregular triangle in which first row is \(1\), \(n\)-th row \((n > 1)\)
+-- lists distinct prime factors of \(n\), i.e.
+-- [A027748](https://oeis.org/A027748).
+--
+-- See 'distinctPrimeFactors'.
 a027748 :: (Enum a, UniqueFactorisation a) => Infinite a
 a027748 = 1 :< Infinite.concatMap distinctPrimeFactors (2 ...)
 
--- https://oeis.org/A034705
+-- | Numbers that are sums of consecutive squares, i.e.
+-- [A034705](https://oeis.org/A034705).
+--
+-- See also 'a000290' and 'squares'.
 a034705 :: Infinite Int
 a034705 = go 0 (Infinite.tail (Infinite.inits1 a000290)) (IS.fromList [0])
   where
@@ -137,21 +156,32 @@ a034705 = go 0 (Infinite.tail (Infinite.inits1 a000290)) (IS.fromList [0])
         (w :| ws) = NE.reverse vs
         (minSeen, seen') = IS.deleteFindMin seen
 
--- https://oeis.org/A051885
+-- | Smallest number whose sum of digits is \(n\), i.e.
+-- [A051885](https://oeis.org/A051885).
+--
+-- See also 'a007953' and 'digitSum'.
 a051885 :: (Integral a) => a -> a
 a051885 = flip divMod 9 >>> ((+ 1) *** (10 ^) >>> uncurry (*) >>> subtract 1)
 
--- | \(a056924(n) = N(4n)\) from [Project Euler Problem 174: Hollow Square
--- Laminae II](https://projecteuler.net/problem=174), i.e.
+-- | Number of divisors of \(n\) that are smaller than \(\sqrt{n}\), i.e.
 -- [A056924](https://oeis.org/A056924).
+--
+-- \(a056924(n) = N(4n)\) from [Project Euler Problem 174: Hollow Square
+-- Laminae II](https://projecteuler.net/problem=174).
 a056924 :: (Integral a, UniqueFactorisation a) => a -> a
 a056924 = (`div` 2) . tau
 
--- https://oeis.org/A060735
+-- | \(a060735(1) = 1\), \(a060735(2) = 2\); thereafter, \(a060735(n)\) is the
+-- smallest number \(m\) not yet in the sequence such that every prime that
+-- divides \(a(n-1)\) also divides \(m\), i.e.
+-- [A060735](https://oeis.org/A060735).
+--
+-- See 'a007947'.
 a060735 :: (UniqueFactorisation a) => Infinite a
 a060735 = Infinite.iterate ((+) `ap` a007947) 2
 
--- https://oeis.org/A0076314
+-- | \(a076314(n) = \lfloor \frac{n}{10} \rfloor + (n \bmod 10)\), i.e.
+-- [A0076314](https://oeis.org/A0076314).
 a076314 :: (Integral a) => a -> a
 a076314 = uncurry (+) . flip divMod 10
 
@@ -174,13 +204,15 @@ a111251 =
   Infinite.filter isPrime $
     Infinite.map (\k -> 3 * k * k + 3 * k + 1) (1 ...)
 
--- https://oeis.org/A204692
+-- | The number of base-10 [bouncy numbers](https://projecteuler.net/problem=113)
+-- below \(10^{n}\), i.e. [A204692](https://oeis.org/A204692).
 a204692 :: (Integral a) => a -> a
 a204692 n
   | n < 3 = 0
   | otherwise = 10 ^ n - (choose (n + 10) 10 + choose (n + 9) 9 - 1 - 10 * n)
 
--- https://oeis.org/A211264
+-- | Number of integer pairs \((x,y,)\) such that \(0 < x < y \leq n\) and
+-- \(xy \leq n\), i.e. [A211264](https://oeis.org/A211264).
 a211264 :: (Integral a) => a -> a
 a211264 n = sum [n `div` k | k <- [1 .. m]] - m * (m + 1) `div` 2
   where
