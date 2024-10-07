@@ -188,14 +188,16 @@ a076314 = uncurry (+) . flip divMod 10
 -- | Numbers of the form \(p^{q}q^{p}\), with distinct primes \(p\) and \(q\),
 -- i.e. [A082949](https://oeis.org/A082949).
 a082949 :: Infinite HybridInteger
-a082949 = go $ singleton (HybridInteger (nextPrime 2) (nextPrime 3))
+a082949 = Infinite.unfoldr go (singleton (HybridInteger (nextPrime 2) (nextPrime 3)))
   where
-    go s = hi :< go (if p' < q then insert (HybridInteger p' q) s'' else s'')
+    go seen
+      | p' < q = (hi, insert (HybridInteger p' q) seen')
+      | otherwise = (hi, seen')
       where
-        s'' = insert (HybridInteger p q') s'
+        seen' = insert (HybridInteger p q') rest
         p' = succ p
         q' = succ q
-        (hi@(HybridInteger p q), s') = deleteFindMin s
+        (hi@(HybridInteger p q), rest) = deleteFindMin seen
 
 -- | Numbers \(k\) such that \(3k^2 + 3k + 1\) is prime, i.e.
 -- [A111251](https://oeis.org/A111251).
