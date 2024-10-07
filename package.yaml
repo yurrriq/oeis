@@ -1,0 +1,25 @@
+name: oeis
+version: !include "./VERSION"
+synopsis: Some sequences from OEIS
+author: Eric Bailey
+maintainer: eric@ericb.me
+github: yurrriq/oeis
+default-extensions:
+  - PostfixOperators
+  - TypeApplications
+dependencies:
+  - arithmoi
+  - base
+  - containers
+  - exact-combinatorics
+  - infinite-list
+ghc-options:
+  - -Wall
+  - -Werror
+  - -Wincomplete-patterns
+  - -Wincomplete-uni-patterns
+library:
+  exposed-modules:
+    - Math.OEIS
+    - Math.OEIS.HybridInteger
+  source-dirs: src
